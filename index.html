@@ -159,8 +159,6 @@
   .book .note{margin-top:16px;font:400 12px/1.65 var(--mono);color:var(--faint)}
   .book .note a{color:var(--accent)}
 
-  .book .setup-flag{grid-column:1/-1;margin:4px 0 0;padding:12px 14px;border:1px dashed var(--line);border-radius:10px;background:var(--bg);font:400 12px/1.6 var(--mono);color:var(--faint)}
-
   /* booking modal */
   body.locked{overflow:hidden}
   .modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(10,12,13,.6)}
@@ -495,23 +493,17 @@
     var url = btn.getAttribute('href') || '';
 
     if (url.indexOf('calendar.google.com') === -1) {
+      // No booking URL yet: fall back to email so the button is never dead.
+      // Set the href on #book-btn and this whole block stops applying.
       console.warn('Booking URL not set: paste your Google appointment schedule link into the #book-btn href in index.html.');
-      var local = location.protocol === 'file:' ||
-                  /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
-      var sec = document.getElementById('book');
-      if (local) {
-        // Previewing locally: leave the section visible so it can be designed,
-        // but make it obvious the button is not wired up yet.
-        var flag = document.createElement('p');
-        flag.className = 'setup-flag';
-        flag.textContent = 'Preview only \u2014 booking URL not set yet. This section is hidden automatically once the site is deployed.';
-        if (sec) sec.querySelector('.book').appendChild(flag);
-        btn.addEventListener('click', function(e){ e.preventDefault(); });
-        btn.setAttribute('aria-disabled', 'true');
-        return;
+      btn.setAttribute('href', 'mailto:mrajora19@gmail.com?subject=Intro%20consultation');
+      btn.removeAttribute('target');
+      btn.removeAttribute('rel');
+      btn.textContent = 'Request a time by email';
+      var note = document.querySelector('.book .note');
+      if (note) {
+        note.textContent = "Online booking is being set up. For now, send me two or three times that suit you and I'll confirm within a day.";
       }
-      if (sec) sec.style.display = 'none';
-      document.querySelectorAll('a[href="#book"]').forEach(function(a){ a.style.display = 'none'; });
       return;
     }
 
